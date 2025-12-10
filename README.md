@@ -10,30 +10,57 @@ I built this to demonstrate:
 - Conditional logic (branching/loops)
 - Extensibility via a tool registry
 
-## Quick Start
+## How to Run
 
-1. **Install Dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 1. Verification Script (Quickest Test)
+To verify that the core engine logic works without starting the full web server, I created a script for you.
 
-2. **Run the API**:
-   ```bash
-   uvicorn app.main:app --reload
-   ```
+Run this command in your terminal:
+```bash
+python run_verification.py
+```
+You should see output showing the "Code Review" workflow running, detecting issues, looping to fix them, and finishing.
 
-3. **Check the Docs**:
-   Go to `http://127.0.0.1:8000/docs` to explore the API.
+### 2. Running the API Server (The Main App)
+To run the full FastAPI application:
 
-## Sample Use Case: Code Review Agent
-The project includes a pre-built "Code Review" workflow (Option A) that:
-1. Extracts functions from code.
-2. Checks complexity and linting rules.
-3. Automatically "improves" code if quality is low (simulated loop).
+**Step A: Install Dependencies**
+If you haven't already, install the required packages:
+```bash
+pip install -r requirements.txt
+```
 
-To run it:
-1. `POST /graph/create/sample` -> Get a `graph_id`.
-2. `POST /graph/run` with that ID and some python code in `initial_state`.
+**Step B: Start the Server**
+Run this command from the `trendence-main` directory:
+```bash
+uvicorn app.main:app --reload
+```
+You should see a message saying `Application startup complete`.
+
+### 3. Using the Workflow Engine
+Once the server is running, the easiest way to interact with it is via the automatic documentation page.
+
+1.  Open your browser to: **`http://127.0.0.1:8000/docs`**
+2.  **Create a Graph**:
+    *   Click on **`POST /graph/create/sample`**.
+    *   Click **Try it out** -> **Execute**.
+    *   Copy the `graph_id` from the response (e.g., `"graph_id": "some-uuid"`).
+3.  **Run the Graph**:
+    *   Click on **`POST /graph/run`**.
+    *   Click **Try it out**.
+    *   Paste your `graph_id` into the JSON body.
+    *   You can use the default `initial_state` or provide some Python code to test:
+        ```json
+        {
+          "graph_id": "PASTE_YOUR_ID_HERE",
+          "initial_state": {
+            "code": "def hello():\n    print('world')"
+          }
+        }
+        ```
+    *   Click **Execute**.
+
+You will see the workflow execute, the steps taken in `history`, and the final results!
 
 ## Structure
 - `app/engine.py`: The core graph runner.
